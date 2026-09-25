@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("MongoDB connection error:", err))
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "https://cloud-nine-frontend-psi.vercel.app", // 👈 your real URL
   credentials: true
 }))
 
@@ -28,7 +28,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60,
-    httpOnly: true
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
   }
 }))
 
@@ -74,8 +76,8 @@ app.post("/logout", (req, res) => {
   })
 })
 
-app.get("/me" , (req , res) => {
-  if(!req.session.userId) {
+app.get("/me", (req, res) => {
+  if (!req.session.userId) {
     return res.status(401).json({ loggedIn: false })
   }
   res.json({ loggedIn: true, username: req.session.userId })
